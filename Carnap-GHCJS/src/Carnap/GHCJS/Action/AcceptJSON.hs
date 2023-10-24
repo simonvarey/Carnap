@@ -1,7 +1,7 @@
 {-# LANGUAGE UndecidableInstances, FlexibleInstances, RankNTypes, OverloadedStrings, FlexibleContexts, DeriveDataTypeable, CPP, JavaScriptFFI #-}
 
 module Carnap.GHCJS.Action.AcceptJSON
-        ( acceptJSONAction) where
+        ( acceptJSONAction, acceptJSONActionSystem) where
 
 import Data.Tree as T
 import qualified Data.Map as M
@@ -37,8 +37,64 @@ import Carnap.Languages.ClassicalSequent.Syntax
 acceptJSONAction ::  IO ()
 acceptJSONAction = runWebGUI $ \w -> 
             do (Just dom) <- webViewGetDomDocument w
-               initializeCallback checkJSON
+               initializeCallback initializeCallbackJS checkJSON
                return ()
+
+acceptJSONActionSystem ::  IO ()
+acceptJSONActionSystem = runWebGUI $ \w -> 
+            do (Just dom) <- webViewGetDomDocument w
+               initializeCallback initializeCallbackJSSystem checkJSONSystem
+               return ()
+
+type FormulaParser = Parsec String u PureFOLForm
+type JustParser = RuntimeDeductionConfig PurePropLexicon (Form Bool) -> Parsec String u [MagnusSL]
+
+ofFOLSys :: String -> Maybe (FormulaParser, JustParser)
+ofFOLSys sys | sys == "LogicBookPD"                     = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "LogicBookPDE"                    = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "LogicBookPDEPlus"                = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "LogicBookPDPlus"                 = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "arthurQL"                        = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "belotPD"                         = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)    
+             | sys == "belotPDE"                        = Just ((purePropFormulaParser extendedLetters), parseMagnusSL) 
+             | sys == "belotPDEPlus"                    = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "belotPDPlus"                     = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "bonevacQL"                       = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "cortensQL"                       = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "davisQL"                         = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "ebelsDugganFOL"                  = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "firstOrder"                      = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "firstOrderNonC"                  = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "gallowPL"                        = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "gallowPLPlus"                    = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "gamutND"                         = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "gamutNDPlus"                     = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "goldfarbAltND"                   = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "goldfarbAltNDPlus"               = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "goldfarbND"                      = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "goldfarbNDPlus"                  = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "gregoryPD"                       = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "gregoryPDE"                      = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "hardegreePL"                     = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "hardegreePL2006"                 = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "hausmanPL"                       = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "howardSnyderPL"                  = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "hurleyPL"                        = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "ichikawaJenkinsQL"               = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "lemmonQuant"                     = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "landeQuant"                      = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "magnusQL"                        = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "magnusQLPlus"                    = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "montagueQC"                      = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "thomasBolducAndZachFOL"          = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "thomasBolducAndZachFOL2019"      = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "thomasBolducAndZachFOLCore"      = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "thomasBolducAndZachFOLPlus2019"  = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "tomassiQL"                       = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "winklerFOL"                      = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | sys == "zachFOLEq"                       = Just ((purePropFormulaParser extendedLetters), parseMagnusSL)
+             | otherwise                                = Nothing
+
 
 checkJSON:: Value -> IO Value
 checkJSON v = do let Success (s,d,c,p) = parse parseReply v
@@ -67,6 +123,26 @@ checkJSON v = do let Success (s,d,c,p) = parse parseReply v
           serialize (Right s) = Right $ show s
           nilson = toJSON ("" :: String)
 
+checkJSONSystem:: Value -> IO Value
+checkJSONSystem v = do let Success (s,d,c,p) = parse parseReplySystem v
+                       print (s,d,c,p)
+                       case ofPropSys s of
+                            Just (system) -> 
+                                case (parseProofData (parsePairSystem system) d, P.parse (ndParseForm system) "" c) of
+                                    (Left e,_) -> return $ replyObject False "" nilson (show e)
+                                    (Right ded,Right conc) -> 
+                                        do let Feedback mseq ds = toDisplaySequenceStructured processLineStructuredFitchHO ded
+                                           let fb = toJSON $ map serialize ds
+                                           return $ case mseq of 
+                                                Just seq@(_:|-: (SS s)) -> replyObject (s =* liftToSequent conc) (show seq) fb ""
+                                                Nothing ->  replyObject False "" fb ""
+                                    (_,Left e) -> return $ replyObject False "" nilson "couldn't parse conclusion"
+                            Nothing -> return $ replyObject False "" nilson "unknown proof system"
+
+    where serialize (Left e) = Left e
+          serialize (Right s) = Right $ show s
+          nilson = toJSON ("" :: String)
+
 replyObject succeeded sequent feedback errmsg = object [ "succeed" .= (succeeded :: Bool)
                                                        , "sequent" .= (sequent :: String)
                                                        , "feedback" .= (feedback :: Value)
@@ -79,6 +155,13 @@ parseReply = withObject "not an object" $ \o -> do
     wantedconc <- o .: "wantedConclusion" :: Parser String
     numPrems   <- o .: "numPrems" :: Parser Int
     return (psetting, proofdata, wantedconc, numPrems)
+
+parseReplySystem = withObject "not an object" $ \o -> do
+    psystem   <- o .: "system" :: Parser String
+    proofdata  <- o .: "proofData" :: Parser Value
+    wantedconc <- o .: "wantedConclusion" :: Parser String
+    numPrems   <- o .: "numPrems" :: Parser Int
+    return (psystem, proofdata, wantedconc, numPrems)
 
 parseProofData :: ((String,String) -> Either P.ParseError (DeductionLine r lex (Form Bool))) -> Value -> Either P.ParseError (DeductionTree r lex (Form Bool))
 parseProofData parsePair valList = evalStateT (process valList) 1
@@ -120,6 +203,12 @@ parsePairFOL  (wff,jstr) = AssertLine <$> P.parse magnusFOLFormulaParser "" wff
                                       <*> return 0
                                       <*> (snd <$> P.parse (parseJstr $ parseMagnusQL (defaultRuntimeDeductionConfig)) "" jstr)
 
+--parsePairSystem :: NaturalDeductionCalc r lex sem -> DeductionLine r lex sem
+parsePairSystem system = \(wff,jstr) -> AssertLine <$> P.parse (ndParseForm system) "" wff
+                                      <*> (fst <$> P.parse (parseJstr $ (ndParseProof system) (defaultRuntimeDeductionConfig)) "" jstr)
+                                      <*> return 0
+                                      <*> (snd <$> P.parse (parseJstr $ (ndParseProof system) (defaultRuntimeDeductionConfig)) "" jstr)
+
 parseJstr r = do rule <- spaces *> r
                  deps <- spaces *> many (try parseIntPair <|> parseInt)
                  return (rule,deps)
@@ -158,13 +247,14 @@ instance (Schematizable (FixLang lex), Schematizable (ClassicalSequentOver lex))
 #ifdef __GHCJS__
 
 foreign import javascript unsafe "acceptJSONCallback_ = $1" initializeCallbackJS :: Callback (payload -> succ -> IO ()) -> IO ()
+foreign import javascript unsafe "acceptJSONCallbackSystem_ = $1" initializeCallbackJSSystem :: Callback (payload -> succ -> IO ()) -> IO ()
 --TODO: unify with other callback code in SequentCheck
 
 foreign import javascript unsafe "$1($2);" simpleCall :: JSVal -> JSVal -> IO ()
 
-initializeCallback :: (Value -> IO Value) -> IO ()
-initializeCallback f = do theCB <- asyncCallback2 (cb f)
-                          initializeCallbackJS theCB
+initializeCallback :: (Callback (JSVal -> JSVal -> IO ()) -> IO ()) -> ((Value -> IO Value) -> IO ())
+initializeCallback jscb f = do theCB <- asyncCallback2 (cb f)
+                               jscb theCB
     where cb f payload succ = do (Just raw) <- fromJSVal payload
                                  let (Just val) = decode . fromStrict . encodeUtf8 $ raw
                                  rslt <- f val
@@ -173,7 +263,7 @@ initializeCallback f = do theCB <- asyncCallback2 (cb f)
 
 #else
 
-initializeCallback :: (Value -> IO Value) -> IO ()
+initializeCallback :: (Callback (JSVal -> JSVal -> IO ()) -> IO ()) -> ((Value -> IO Value) -> IO ())
 initializeCallback = undefined
 
 #endif
