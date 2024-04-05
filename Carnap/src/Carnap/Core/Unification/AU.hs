@@ -7,6 +7,7 @@ import Carnap.Core.ModelChecking.SAT
 import Carnap.Core.Unification.Unification
 import Carnap.Core.Util
 import Data.Typeable
+import Control.Monad
 import Control.Monad.Logic
 import Control.Monad.Trans.Class as M
 import Data.List

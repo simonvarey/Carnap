@@ -230,7 +230,7 @@ instance (Ord r, Ord (ClassicalSequentOver lex (Succedent sem))) => Ord (ProofLi
                                                        || (n == n' && c < c')
                                                        || (n == n' && c == c' && r < r')
 
-instance (Show (ClassicalSequentOver lex (Succedent sem)), Show r) => Hashable (ProofLine r lex sem)
+instance (Show (ClassicalSequentOver lex (Succedent sem)), Show r, Eq (ClassicalSequentOver lex (Succedent sem)), Eq r) => Hashable (ProofLine r lex sem)
         where hashWithSalt k (ProofLine n l r) = hashWithSalt k n
                                                  `hashWithSalt` show l
                                                  `hashWithSalt` show r
@@ -248,8 +248,8 @@ instance Ord a => Ord (Tree a) where
                                                 c -> c
 #endif
 
-instance Hashable a => Hashable (Tree a) where
-        hashWithSalt k (Node x ts) = hashWithSalt k x `hashWithSalt` ts
+{-- instance Hashable a => Hashable (Tree a) where
+        hashWithSalt k (Node x ts) = hashWithSalt k x `hashWithSalt` ts --}
 
 --------------------
 --  1.4 Feedback  --

@@ -1,4 +1,4 @@
-{-#LANGUAGE  UndecidableInstances, FlexibleInstances, MultiParamTypeClasses, FunctionalDependencies, GADTs, PolyKinds, TypeOperators, RankNTypes, FlexibleContexts, ScopedTypeVariables  #-}
+{-#LANGUAGE  UndecidableInstances, FlexibleInstances, MultiParamTypeClasses, FunctionalDependencies, GADTs, PolyKinds, TypeOperators, RankNTypes, FlexibleContexts, ScopedTypeVariables, IncoherentInstances  #-}
 module Carnap.Core.Data.Optics(
   RelabelVars(..),  PrismLink(..), (:<:)(..), ReLex(..), unaryOpPrismOn, unaryOpPrism, binaryOpPrismOn, binaryOpPrism, genChildren, PrismSubstitutionalVariable(..), flipt, relexIso
 ) where

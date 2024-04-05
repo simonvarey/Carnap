@@ -134,7 +134,8 @@ hoProcessLineMemo ::
     , Inference r lex sem
     , Typeable sem
     , MonadVar (ClassicalSequentOver lex) (State Int)
-    , Show (ClassicalSequentOver lex (Succedent sem)), Show r
+    , Show (ClassicalSequentOver lex (Succedent sem)), Show r, Eq r
+    , Eq (ClassicalSequentOver lex (Succedent sem))
     ) => ProofTreeProducer r lex sem -> ProofMemoRef lex sem r -> Deduction r lex sem -> Restrictor r lex -> Int -> IO (FeedbackLine lex sem)
 hoProcessLineMemo ptp ref ded res n = case ded !! (n - 1) of
   (QedLine _ _ _) -> return $ Left $ NoResult n
@@ -151,7 +152,8 @@ hoProcessLineHardegreeMemo, hoProcessLineMontagueMemo,
     , Inference r lex sem
     , Typeable sem
     , MonadVar (ClassicalSequentOver lex) (State Int)
-    , Show (ClassicalSequentOver lex (Succedent sem)), Show r
+    , Show (ClassicalSequentOver lex (Succedent sem)), Show r, Eq r
+    , Eq (ClassicalSequentOver lex (Succedent sem))
     ) => ProofMemoRef lex sem r -> Deduction r lex sem -> Restrictor r lex -> Int -> IO (FeedbackLine lex sem)
 hoProcessLineHardegreeMemo = hoProcessLineMemo toProofTreeHardegree
 hoProcessLineMontagueMemo = hoProcessLineMemo toProofTreeMontague
@@ -339,6 +341,7 @@ hoReduceProofTreeMemo ::
     , StaticVar (ClassicalSequentOver lex)
     , Hashable (ProofTree r lex sem)
     , Typeable sem
+    , Eq (ClassicalSequentOver lex (Succedent sem))
     ) =>  ProofMemoRef lex sem r -> Restrictor r lex -> ProofTree r lex sem ->  IO (FeedbackLine lex sem)
 hoReduceProofTreeMemo ref res pt@(Node (ProofLine no cont rules) ts) =  
         do thememo <- readIORef ref
