@@ -1,5 +1,5 @@
 { ghcjsVer ? "ghcjs",
-  ghcVer ? "ghc8106",
+  ghcVer ? "ghc8107",
   profiling ? false,
   hls ? false,
   inNixShell ? false,
@@ -23,6 +23,7 @@ let
         (import ./nix/compose-haskell-overlays.nix {
           ghcVer = ghcjsVer;
           overlays = [
+            (import ./server.nix { inherit profiling truth-tree client ; inherit (sources) persistent; })
             (import ./client.nix { })
           ];
         })
@@ -30,30 +31,30 @@ let
     };
 
   client = nixpkgs-stable.haskell.packages."${ghcjsVer}".Carnap-GHCJS;
-  truth-tree = import sources.truth-tree { inherit nixpkgs; };
+  truth-tree = import sources.truth-tree { inherit nixpkgs-stable; };
 
-  nixpkgs = import sources.nixpkgs {
-      config = {
-        # yes, packages are broken, but we fix them ;-)
-        allowBroken = true;
-      };
-      overlays = [
-        (import ./nix/gitignore.nix { })
-        (import ./nix/compose-haskell-overlays.nix {
-          inherit ghcVer;
-          overlays = [
-            (import ./server.nix { inherit profiling truth-tree client ; inherit (sources) persistent; })
-          ];
-        })
-      ];
-    };
+  #nixpkgs = import sources.nixpkgs {
+  #    config = {
+  #      # yes, packages are broken, but we fix them ;-)
+  #      allowBroken = true;
+  #    };
+  #    overlays = [
+  #      (import ./nix/gitignore.nix { })
+  #      (import ./nix/compose-haskell-overlays.nix {
+  #        inherit ghcVer;
+  #        overlays = [
+  #          (import ./server.nix { inherit profiling truth-tree client ; inherit (sources) persistent; })
+  #        ];
+  #      })
+  #    ];
+  #  };
 
-  inherit (nixpkgs) lib;
+  inherit (nixpkgs-stable) lib;
 
   devtools = { isGhcjs }:
   let
-    modernpkgs = nixpkgs.haskell.packages."${ghcVer}";
-    pkgs = if isGhcjs then nixpkgs-stable.haskell.packages.ghc884 else modernpkgs;
+    modernpkgs = nixpkgs-stable.haskell.packages."${ghcVer}";
+    pkgs = if isGhcjs then nixpkgs-stable.haskell.packages.ghc865 else modernpkgs;
   in with pkgs; ([
     Cabal
     cabal-install
@@ -70,12 +71,12 @@ let
   ]);
 
   in rec {
-    inherit nixpkgs nixpkgs-stable client truth-tree;
-    server = nixpkgs.haskell.packages."${ghcVer}".Carnap-Server;
+    inherit nixpkgs-stable client truth-tree;
+    server = nixpkgs-stable.haskell.packages."${ghcVer}".Carnap-Server;
 
     # a ghc-based shell for development of Carnap and Carnap-Server
     # Carnap-GHCJS currently broken on ghc, see `server.nix` for details
-    ghcShell = nixpkgs.haskell.packages."${ghcVer}".shellFor {
+    ghcShell = nixpkgs-stable.haskell.packages."${ghcVer}".shellFor {
       packages = p: [ p.Carnap p.Carnap-Client p.Carnap-Server ];
       withHoogle = true;
       buildInputs = devtools { isGhcjs = false; };

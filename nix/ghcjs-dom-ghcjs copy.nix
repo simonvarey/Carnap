@@ -1,4 +1,4 @@
-{ mkDerivation, base, ghc-prim, ghcjs-base, ghcjs-prim, lib
+{ mkDerivation, base, ghc-prim, ghcjs-base, ghcjs-prim, stdenv
 , text, transformers
 }:
 mkDerivation {
@@ -9,5 +9,5 @@ mkDerivation {
     base ghc-prim ghcjs-base ghcjs-prim text transformers
   ];
   description = "DOM library that supports both GHCJS and WebKitGTK";
-  license = lib.licenses.mit;
+  license = stdenv.lib.licenses.mit;
 }

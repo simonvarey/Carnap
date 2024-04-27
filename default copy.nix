@@ -53,7 +53,7 @@ let
   devtools = { isGhcjs }:
   let
     modernpkgs = nixpkgs.haskell.packages."${ghcVer}";
-    pkgs = if isGhcjs then nixpkgs-stable.haskell.packages.ghc884 else modernpkgs;
+    pkgs = if isGhcjs then nixpkgs-stable.haskell.packages.ghc865 else modernpkgs;
   in with pkgs; ([
     Cabal
     cabal-install
